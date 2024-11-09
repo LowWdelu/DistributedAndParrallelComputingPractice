@@ -8,6 +8,8 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.io.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 public class Server {
@@ -37,6 +39,8 @@ public class Server {
     private static final int BUFFER_SIZE = 1024;
     public static void main(String[] args) {
         // 创建ServerSocket
+        ExecutorService threadPool = Executors.newFixedThreadPool(5);
+
         try (ServerSocket serverSocket = new ServerSocket(3000)) {
             System.out.println("服务器已启动，等待客户端链接");
 
@@ -44,8 +48,8 @@ public class Server {
                 // 接受Socket请求
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("客户端已链接" + clientSocket.getInetAddress().getHostAddress());
-
-                new Thread(new ClientHandler(clientSocket)).start();
+                //将此处新建线程，修改为调用线程池中的线程处理
+                threadPool.execute(new ClientHandler(clientSocket));
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
