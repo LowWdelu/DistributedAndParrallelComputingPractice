@@ -35,7 +35,16 @@ public class Server {
     * 4、使用print()方法时，线程会阻塞在没有换行符作为结尾标志的输出流中
     **解决办法：在每次print(StringToPrint)后，使用flush()方法刷新输出流，将数据发送到客户端
     * */
+    /*服务器3.0版本
+    0、注意，本作业中，测试程序使用C#编写，采用的字符集是Unicode字符集
+    1、在实验基础中，增加一条协议：
+        auth2 学号,姓名
+        其中，逗号为半角逗号，姓名为自己姓名，汉字
+    2、在服务器端中，使用线程池
+    3、在服务器端中，考虑线程通信超时回收
+     */
     private static final String myStuID = "202128310219";
+    private static final String myName = "刘伟";
     private static final int BUFFER_SIZE = 1024;
     public static void main(String[] args) {
         // 创建ServerSocket
@@ -67,8 +76,8 @@ public class Server {
         public void run() {
             System.out.println("线程启动");
             try (
-                    BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.US_ASCII));
-                    PrintWriter out = new PrintWriter(socket.getOutputStream(), true, StandardCharsets.US_ASCII)
+                    BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_16LE));
+                    PrintWriter out = new PrintWriter(socket.getOutputStream(), true, StandardCharsets.UTF_16LE)
             ) {
                 // 读取请求
                 char[] buffer = new char[BUFFER_SIZE];
@@ -81,13 +90,13 @@ public class Server {
                     String request = requestBuilder.toString().strip();
 
                     // 检查请求是否包含完整命令
-                    if (isCompleteRequest(request)) {
+                  //  if (isCompleteRequest(request)) {
                         // 处理请求
                         handleRequest(request, out);
 
                         // 清空请求构建器，以便接收下一个请求
                         requestBuilder.setLength(0);
-                    }
+                 //   }
                 }
 
             } catch (IOException e) {
@@ -95,9 +104,15 @@ public class Server {
             }
         }
 
-        private boolean isCompleteRequest(String request) {
+        private boolean isCompleteRequest(String request) throws UnsupportedEncodingException {
+//            //输出请求字符串的编码
+//            byte[] bytes = request.getBytes("utf-8");
+//            for (byte b : bytes) {
+//                System.out.print(b + " ");
+//            }
+
             // 判断请求是否以特定的关键词结尾来确定请求是否完整
-            return request.endsWith("gettime") || request.startsWith("test ") || request.startsWith("auth ");
+            return request.startsWith("gettime") || request.startsWith("test ") || request.startsWith("auth ");
         }
 
         private void handleRequest(String request, PrintWriter out) {
@@ -111,6 +126,22 @@ public class Server {
                 System.out.println("输出客户端内容：" + content);
                 out.print(content);
                 out.flush();
+            }else if(request.startsWith("auth2 ")){
+                String content = request.substring(6);
+                System.out.println("输出客户端学号和姓名：" + content);
+                //拆分学号和姓名，学号12位，姓名为汉字长度不定
+                String stuID = content.substring(0,12);
+                String name = content.substring(13);
+                System.out.println("输出客户端学号：" + stuID+"，姓名："+name);
+                if(stuID.equals(myStuID)&&name.equals(myName)){
+                    out.print("ok");
+                    out.flush();
+                    System.out.println("输出服务器响应：ok");
+                }else{
+                    out.print("error");
+                    out.flush();
+                    System.out.println("输出服务器响应：error");
+                }
             } else if (request.startsWith("auth ")) {
                 String studentId = request.substring(5);
                 System.out.println("输出客户端学号：" + studentId);
