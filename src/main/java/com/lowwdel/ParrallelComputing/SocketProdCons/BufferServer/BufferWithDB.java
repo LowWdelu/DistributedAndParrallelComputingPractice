@@ -73,7 +73,7 @@ public class BufferWithDB {
 
         private void cleanUpDatabase(){
             try(Connection conn = DatabaseUtil.getConnection()){
-                System.out.println("执行批量处理");
+                System.out.println("执行数据库清理任务");
 
                 //判断是否可重置自增ID（首先得有数据可被清理再重置）如果数据库为空则清理不了
                 if(!isDatabaseEmpty(conn)){

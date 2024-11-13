@@ -13,24 +13,26 @@ public class ConsumerClient {
             Scanner scanner = new Scanner(System.in);
             System.out.println("是否要批量消息拉取？(y/n)");
             String answer = scanner.nextLine();
-            if(answer.equals("y")){
+
+            int batchSize = 1;
+            if(answer.equals("y")) {
                 System.out.println("请输入批量消息拉取的数量：");
-                int batchSize = scanner.nextInt();
+                batchSize = scanner.nextInt();
                 scanner.nextLine();
+            }
+            //将批量消息拉取的数量发送给服务器
+            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+            out.writeInt(batchSize);
+            out.flush();
 
-                //将批量消息拉取的数量发送给服务器
-                DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-                out.writeInt(batchSize);
-                out.flush();
-
-                //接收批量消息并处理
-                DataInputStream in = new DataInputStream(socket.getInputStream());
-                }
-
+            //接收批量消息并处理
             DataInputStream in = new DataInputStream(socket.getInputStream());
             while(true){
-                long product = in.readLong();
-                processProduct(product);
+                for (int i = 0; i < batchSize; i++) {
+                    long product = in.readLong();
+                    processProduct(product);
+                }
+                System.out.println("以批量消费" + batchSize + "个数据");
             }
         }
     }
