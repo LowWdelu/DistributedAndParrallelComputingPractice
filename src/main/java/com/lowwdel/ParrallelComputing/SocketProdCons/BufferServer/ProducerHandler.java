@@ -1,4 +1,4 @@
-package com.lowwdel.ParrallelComputing.SocketProdCons;
+package com.lowwdel.ParrallelComputing.SocketProdCons.BufferServer;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -6,9 +6,9 @@ import java.net.Socket;
 
 public class ProducerHandler implements Runnable {
     private final Socket producerLink;
-    private final Buffer buffer;
+    private final BufferWithDB buffer;
 
-    public ProducerHandler(Socket ProducerLink,Buffer buffer) {
+    public ProducerHandler(Socket ProducerLink,BufferWithDB buffer) {
         this.producerLink = ProducerLink;
         this.buffer = buffer;
     }
@@ -23,7 +23,7 @@ public class ProducerHandler implements Runnable {
                 buffer.put(product);
             }
 
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

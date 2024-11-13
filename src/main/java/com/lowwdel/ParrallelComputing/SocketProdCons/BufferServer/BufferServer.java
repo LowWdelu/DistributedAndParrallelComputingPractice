@@ -1,4 +1,4 @@
-package com.lowwdel.ParrallelComputing.SocketProdCons;
+package com.lowwdel.ParrallelComputing.SocketProdCons.BufferServer;
 
 
 import java.io.IOException;
@@ -30,7 +30,7 @@ public class BufferServer {
     private static final int THREAD_POOL_SIZE = 5;
     private static ServerSocket producerSocket;
     private static ServerSocket consumerSocket;
-    private static Buffer buffer = new Buffer(10);
+    private static BufferWithDB buffer = new BufferWithDB();
     private static ExecutorService threadPool = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
 
     public static void main(String[] args) {

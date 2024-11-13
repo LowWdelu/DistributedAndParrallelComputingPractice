@@ -1,4 +1,4 @@
-package com.lowwdel.ParrallelComputing.SocketProdCons;
+package com.lowwdel.ParrallelComputing.SocketProdCons.BufferServer;
 
 import java.util.LinkedList;
 import java.util.Queue;
