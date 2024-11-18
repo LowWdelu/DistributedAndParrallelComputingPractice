@@ -14,7 +14,9 @@ public class ProducerClinet {
         try(Socket socket = new Socket("localhost",3000)){
             System.out.println("生产者已连接");
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+            //为了与消耗速度一致，在这里等待1s
             while(true){
+                Thread.sleep(1000);
                 long number = generateNumber();
                 out.writeLong(number);
                 out.flush();
@@ -22,6 +24,8 @@ public class ProducerClinet {
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
